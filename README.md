@@ -79,6 +79,7 @@ gcp-bigquery-observability-lab/
 │   └── cleanup.sh               # Safe resource cleanup script
 ├── docs/
 │   ├── ARCHITECTURE.md          # Complete architecture & telemetry flow
+│   ├── BIGQUERY-SYNC-ARCHITECTURES.md # CDC, Event-Driven, Dataflow & Batch Sync Guide
 │   ├── COMMANDS-RUN.md          # Audit trail of all 30+ executed commands
 │   ├── IAM.md                   # IAM Matrix & OIDC authentication deep-dive
 │   ├── BIGQUERY-INTERVIEW-NOTES.md # BigQuery vs Postgres, Partitioning, Slots

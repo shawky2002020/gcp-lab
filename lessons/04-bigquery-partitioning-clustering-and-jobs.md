@@ -123,3 +123,9 @@ Get-Content "sql/metadata.sql" | bq query --use_legacy_sql=false --format=pretty
 > **Interview Question:** *"What are BigQuery Slots and how do they relate to query performance?"*  
 > **Strong Answer:**  
 > *"A slot is a virtual CPU and memory unit used by BigQuery's distributed execution engine. When a query is submitted, BigQuery decomposes the SQL into execution stages and assigns work to hundreds or thousands of slots in parallel. High slot milliseconds indicate CPU-heavy operations like regular expressions, complex mathematical operations, or unoptimized cross joins."*
+
+---
+
+## 7. Deep-Dive Reading
+For a complete architectural comparison of synchronization patterns (CDC vs. Event-Driven vs. Dataflow vs. Batch Load), read:
+- [**BigQuery Synchronization Architectures (CDC, Events, Beam & Batch)**](../docs/BIGQUERY-SYNC-ARCHITECTURES.md)

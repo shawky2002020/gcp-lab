@@ -75,6 +75,11 @@ flowchart TD
 
 ---
 
+## Architectural Deep-Dives
+- [**BigQuery Synchronization Architectures (CDC, Events, Beam & Batch)**](../docs/BIGQUERY-SYNC-ARCHITECTURES.md): In-depth comparison of Change Data Capture (Datastream), Event-Driven streaming (Pub/Sub worker vs direct subscription), Cloud Dataflow (Apache Beam), Scheduled Micro-Batch (`bq load`), and BigLake Federation.
+
+---
+
 ## Active Environment Details
 
 - **GCP Project ID:** `bq-observe-lab-840614`
