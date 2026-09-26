@@ -1,0 +1,110 @@
+{
+  "displayName": "BigQuery Observability Lab",
+  "gridLayout": {
+    "columns": "2",
+    "widgets": [
+      {
+        "title": "Order API - Request Count",
+        "xyChart": {
+          "dataSets": [
+            {
+              "timeSeriesQuery": {
+                "timeSeriesFilter": {
+                  "filter": "resource.type = \"cloud_run_revision\" AND resource.label.service_name = \"order-api\" AND metric.type = \"run.googleapis.com/request_count\"",
+                  "aggregation": {
+                    "perSeriesAligner": "ALIGN_RATE"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "title": "Order API - Request Latency (p95)",
+        "xyChart": {
+          "dataSets": [
+            {
+              "timeSeriesQuery": {
+                "timeSeriesFilter": {
+                  "filter": "resource.type = \"cloud_run_revision\" AND resource.label.service_name = \"order-api\" AND metric.type = \"run.googleapis.com/request_latencies\"",
+                  "aggregation": {
+                    "perSeriesAligner": "ALIGN_PERCENTILE_95"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "title": "Analytics Worker - Invocations",
+        "xyChart": {
+          "dataSets": [
+            {
+              "timeSeriesQuery": {
+                "timeSeriesFilter": {
+                  "filter": "resource.type = \"cloud_run_revision\" AND resource.label.service_name = \"analytics-worker\" AND metric.type = \"run.googleapis.com/request_count\"",
+                  "aggregation": {
+                    "perSeriesAligner": "ALIGN_RATE"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "title": "Application Error Count (Log-Based Metric)",
+        "xyChart": {
+          "dataSets": [
+            {
+              "timeSeriesQuery": {
+                "timeSeriesFilter": {
+                  "filter": "resource.type = \"cloud_run_revision\" AND metric.type = \"logging.googleapis.com/user/lab_error_count\"",
+                  "aggregation": {
+                    "perSeriesAligner": "ALIGN_DELTA"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "title": "Pub/Sub - Undelivered Messages Backlog",
+        "xyChart": {
+          "dataSets": [
+            {
+              "timeSeriesQuery": {
+                "timeSeriesFilter": {
+                  "filter": "resource.type = \"pubsub_subscription\" AND metric.type = \"pubsub.googleapis.com/subscription/num_undelivered_messages\"",
+                  "aggregation": {
+                    "perSeriesAligner": "ALIGN_MEAN"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "title": "Cloud Run - Active Instance Count",
+        "xyChart": {
+          "dataSets": [
+            {
+              "timeSeriesQuery": {
+                "timeSeriesFilter": {
+                  "filter": "resource.type = \"cloud_run_revision\" AND metric.type = \"run.googleapis.com/container/instance_count\"",
+                  "aggregation": {
+                    "perSeriesAligner": "ALIGN_MEAN"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

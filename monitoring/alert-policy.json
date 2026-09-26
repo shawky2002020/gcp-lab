@@ -1,0 +1,26 @@
+{
+  "displayName": "Lab High Application Error Rate",
+  "documentation": {
+    "content": "Alert triggered when `lab_error_count` exceeds 0 within 5 minutes. Inspect Cloud Logging and Cloud Trace for root cause.",
+    "mimeType": "text/markdown"
+  },
+  "conditions": [
+    {
+      "displayName": "Application ERROR log count > 0",
+      "conditionThreshold": {
+        "filter": "resource.type = \"cloud_run_revision\" AND metric.type = \"logging.googleapis.com/user/lab_error_count\"",
+        "comparison": "COMPARISON_GT",
+        "thresholdValue": 0,
+        "duration": "0s",
+        "aggregations": [
+          {
+            "alignmentPeriod": "300s",
+            "perSeriesAligner": "ALIGN_DELTA"
+          }
+        ]
+      }
+    }
+  ],
+  "combiner": "OR",
+  "enabled": true
+}

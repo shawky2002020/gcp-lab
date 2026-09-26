@@ -1,0 +1,24 @@
+{
+  "name": "analytics-worker",
+  "version": "1.0.0",
+  "description": "Analytics Worker service for GCP Observability Lab",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "@google-cloud/bigquery": "^7.9.2",
+    "@google-cloud/opentelemetry-cloud-trace-exporter": "^2.2.0",
+    "@opentelemetry/api": "^1.9.0",
+    "@opentelemetry/resources": "^1.30.0",
+    "@opentelemetry/sdk-trace-node": "^1.30.0",
+    "@opentelemetry/semantic-conventions": "^1.28.0",
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.13.0",
+    "typescript": "^5.7.3"
+  }
+}
