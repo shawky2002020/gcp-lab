@@ -8,17 +8,17 @@ In high-throughput microservices, coupling a client-facing API directly to analy
 
 ```mermaid
 flowchart TD
-    subgraph Synchronous Anti-Pattern
+    subgraph SyncPattern["Synchronous Anti-Pattern"]
         Client1["Client"] -->|"1. POST /orders"| API1["API Service"]
         API1 -->|"2. Synchronous Write"| DB1[("Analytical Data Warehouse")]
         DB1 -.->|"3. Latency spike or timeout blocks API"| API1
         API1 -.->|"4. Client checkout times out (504 Gateway Timeout)"| Client1
     end
 
-    subgraph Decoupled Event-Driven Pattern (This Lab)
+    subgraph DecoupledPattern["Decoupled Event-Driven Pattern (This Lab)"]
         Client2["Client"] -->|"1. POST /orders"| API2["order-api"]
         API2 -->|"2. Publish event (~40ms)"| Topic["Pub/Sub: order-events"]
-        API2 -->>|"3. Immediate 202 Accepted"| Client2
+        API2 -->|"3. Immediate 202 Accepted"| Client2
         Topic -->|"4. Push message"| Sub["order-events-sub"]
         Sub -->|"5. Authenticated push"| Worker["analytics-worker"]
         Worker -->|"6. Analytical streaming write"| BQ[("BigQuery: order_events")]

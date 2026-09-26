@@ -8,7 +8,7 @@ In cloud-native design, we decouple **ingress endpoints** from **backend process
 
 ```mermaid
 flowchart LR
-    subgraph Internet
+    subgraph Internet["Internet Clients"]
         User["User / Mobile Client"]
     end
     subgraph CloudRun["Google Cloud Run (Serverless)"]
