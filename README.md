@@ -19,7 +19,7 @@ flowchart TD
     OrderAPI -.->|"Structured JSON"| Logging["Google Cloud Logging"]
     Worker -.->|"Structured JSON"| Logging
 
-    Logging -->|"severity>=ERROR"| LogMetric["Log-Based Metric: lab_error_count"]
+    Logging -->|"severity &gt;= ERROR"| LogMetric["Log-Based Metric: lab_error_count"]
     LogMetric --> Monitoring["Cloud Monitoring Dashboard & Alerts"]
 ```
 

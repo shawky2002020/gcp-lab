@@ -35,7 +35,7 @@ flowchart TD
     subgraph ObservabilityLayer["6. GCP Observability Plane"]
         CloudTrace["Google Cloud Trace<br/>(OpenTelemetry Distributed Spans)"]
         CloudLogging["Google Cloud Logging<br/>(Trace-Correlated JSON Logs)"]
-        LogMetric["Log-Based Metric<br/>lab_error_count (severity >= ERROR)"]
+        LogMetric["Log-Based Metric<br/>lab_error_count (severity &gt;= ERROR)"]
         CloudMonitoring["Cloud Monitoring Dashboard<br/>BigQuery Observability Lab"]
         AlertPolicy["Alert Policy<br/>Lab High Application Error Rate"]
     end
@@ -43,7 +43,7 @@ flowchart TD
     %% Data Pipeline Connections
     Client -->|"1. POST /orders {userId, amount}"| OrderAPI
     OrderAPI -->|"2. Publish event + W3C traceparent"| Topic
-    OrderAPI -->>|"3. Immediate 202 Accepted"| Client
+    OrderAPI -->|"3. Immediate 202 Accepted"| Client
     Topic -->|"4. Buffer event"| Sub
     InvokerIdentity -.->|"Mints signed OIDC JWT"| Sub
     Sub -->|"5. Authenticated HTTP POST (roles/run.invoker)"| Worker

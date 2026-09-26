@@ -57,7 +57,7 @@ flowchart TD
     Worker -.->|"Invocations, Container instances"| Monitoring
     Sub -.->|"Undelivered messages backlog"| Monitoring
 
-    Logging -->|"Extracts error logs (severity>=ERROR)"| LogMetric
+    Logging -->|"Extracts error logs (severity &gt;= ERROR)"| LogMetric
     LogMetric -->|"Feeds time-series count"| Monitoring
     LogMetric -->|"Triggers incident when count > 0"| Alert
 ```
