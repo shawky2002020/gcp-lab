@@ -4,25 +4,37 @@
 
 ## 1. Architectural Concept
 
-In high-throughput microservices, coupling a client-facing API directly to analytical storage is an anti-pattern:
+### A. The Synchronous Bottleneck (Anti-Pattern)
+Coupling client-facing APIs directly to analytical databases causes catastrophic failures during traffic surges:
+
+```mermaid
+flowchart LR
+    Client["Client"] -->|"1. POST /orders"| API["API Service"]
+    API -->|"2. Synchronous Write"| DB[("Analytical Database")]
+    DB -.->|"3. Latency spike / contention"| API
+    API -.->|"4. Client timeout (504)"| Client
+```
+
+---
+
+### B. The Decoupled Event-Driven Solution (This Lab)
+Using Pub/Sub as an asynchronous buffer isolates client availability from backend analytical writes:
 
 ```mermaid
 flowchart TD
-    subgraph SyncPattern["Synchronous Anti-Pattern"]
-        Client1["Client"] -->|"1. POST /orders"| API1["API Service"]
-        API1 -->|"2. Synchronous Write"| DB1[("Analytical Data Warehouse")]
-        DB1 -.->|"3. Latency spike or timeout blocks API"| API1
-        API1 -.->|"4. Client checkout times out (504 Gateway Timeout)"| Client1
-    end
+    Client["Client / Load Generator"]
+    API["Ingestion: order-api (Cloud Run)"]
+    Topic["Buffer: order-events (Pub/Sub Topic)"]
+    Sub["Push: order-events-sub (Subscription)"]
+    Worker["Consumer: analytics-worker (Cloud Run)"]
+    BQ[("Storage: order_events (BigQuery)")]
 
-    subgraph DecoupledPattern["Decoupled Event-Driven Pattern (This Lab)"]
-        Client2["Client"] -->|"1. POST /orders"| API2["order-api"]
-        API2 -->|"2. Publish event (~40ms)"| Topic["Pub/Sub: order-events"]
-        API2 -->|"3. Immediate 202 Accepted"| Client2
-        Topic -->|"4. Push message"| Sub["order-events-sub"]
-        Sub -->|"5. Authenticated push"| Worker["analytics-worker"]
-        Worker -->|"6. Analytical streaming write"| BQ[("BigQuery: order_events")]
-    end
+    Client -->|"1. POST /orders"| API
+    API -->|"2. Publish message (~40ms)"| Topic
+    API -->|"3. Immediate 202 Accepted"| Client
+    Topic -->|"4. Deliver push message"| Sub
+    Sub -->|"5. Authenticated HTTP POST (OIDC)"| Worker
+    Worker -->|"6. Analytical streaming write"| BQ
 ```
 
 ### Key Advantages of Decoupling:
