@@ -4,6 +4,63 @@ Welcome to the hands-on lesson modules. Each lesson is self-contained with archi
 
 ---
 
+## End-to-End GCP System Architecture
+
+```mermaid
+flowchart TD
+    subgraph ClientLayer["1. Client Ingress"]
+        Client["Client / Load Generator<br/>(HTTP POST /orders)"]
+    end
+
+    subgraph IngestionLayer["2. Public Ingestion Layer (Cloud Run)"]
+        OrderAPI["order-api<br/>(Public Ingress / Port 8080)<br/>Identity: order-api-sa"]
+    end
+
+    subgraph MessagingLayer["3. Asynchronous Decoupling (Cloud Pub/Sub)"]
+        Topic["Topic: order-events"]
+        Sub["Push Subscription: order-events-sub<br/>(OIDC Token Authentication)"]
+        InvokerIdentity["Identity Token Signer<br/>pubsub-run-invoker-sa"]
+    end
+
+    subgraph ProcessingLayer["4. Private Consumer Layer (Cloud Run)"]
+        Worker["analytics-worker<br/>(Private Ingress / No Unauth Access)<br/>Identity: analytics-worker-sa"]
+    end
+
+    subgraph StorageLayer["5. Analytical Storage (Google BigQuery)"]
+        Dataset["Dataset: analytics_lab (europe-west1)"]
+        Table[("Table: order_events<br/>Partition: created_at DAY<br/>Cluster: user_id, status")]
+        Dataset --- Table
+    end
+
+    subgraph ObservabilityLayer["6. GCP Observability Plane"]
+        CloudTrace["Google Cloud Trace<br/>(OpenTelemetry Distributed Spans)"]
+        CloudLogging["Google Cloud Logging<br/>(Trace-Correlated JSON Logs)"]
+        LogMetric["Log-Based Metric<br/>lab_error_count (severity >= ERROR)"]
+        CloudMonitoring["Cloud Monitoring Dashboard<br/>BigQuery Observability Lab"]
+        AlertPolicy["Alert Policy<br/>Lab High Application Error Rate"]
+    end
+
+    %% Data Pipeline Connections
+    Client -->|"1. POST /orders {userId, amount}"| OrderAPI
+    OrderAPI -->|"2. Publish event + W3C traceparent"| Topic
+    OrderAPI -->>|"3. Immediate 202 Accepted"| Client
+    Topic -->|"4. Buffer event"| Sub
+    InvokerIdentity -.->|"Mints signed OIDC JWT"| Sub
+    Sub -->|"5. Authenticated HTTP POST (roles/run.invoker)"| Worker
+    Worker -->|"6. BigQuery Streaming Insert"| Table
+
+    %% Observability Connections
+    OrderAPI -.->|"Export API Spans"| CloudTrace
+    Worker -.->|"Export Worker Spans"| CloudTrace
+    OrderAPI -.->|"JSON stdout (with traceId)"| CloudLogging
+    Worker -.->|"JSON stdout (with traceId)"| CloudLogging
+    CloudLogging -->|"Filter error logs"| LogMetric
+    LogMetric -->|"Feed error count"| CloudMonitoring
+    LogMetric -->|"Trigger incident on errors"| AlertPolicy
+```
+
+---
+
 ## Curriculum Table of Contents
 
 | Lesson | Title | Core Technologies | Primary Focus |
